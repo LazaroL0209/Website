@@ -4,83 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drone Wind Turbine Inspections</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN for utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for 'Inter' typeface -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Custom CSS for body font and background */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8; /* Light blue-gray background */
         }
-        /* Custom styles for better aesthetics */
+        /* Custom styles for primary buttons for consistent look and feel */
         .btn-primary {
             background-color: #3b82f6; /* Blue-500 */
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem; /* rounded-lg */
             font-weight: 600; /* font-semibold */
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease; /* Smooth hover effect */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         }
         .btn-primary:hover {
-            background-color: #2563eb; /* Blue-600 */
+            background-color: #2563eb; /* Darker blue on hover */
         }
+        /* Custom styles for input fields */
         .input-field {
             padding: 0.75rem;
-            border: 1px solid #d1d5db; /* Gray-300 */
+            border: 1px solid #d1d5db; /* Gray-300 border */
             border-radius: 0.5rem; /* rounded-lg */
             width: 100%;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Inner shadow for depth */
         }
+        /* Custom styles for card-like containers */
         .card {
             background-color: white;
-            border-radius: 1rem; /* rounded-xl */
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* shadow-xl */
+            border-radius: 1rem; /* rounded-xl for softer edges */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* shadow-xl for prominent cards */
             padding: 2rem;
         }
+        /* Custom styles for main section headings */
         .section-heading {
             font-size: 2.25rem; /* text-4xl */
             font-weight: 700; /* font-bold */
             color: #1f2937; /* Gray-900 */
             margin-bottom: 1.5rem;
         }
+        /* Styles for images within the gallery to ensure consistent appearance */
         .image-gallery img {
             border-radius: 0.75rem; /* rounded-xl */
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease; /* Smooth zoom on hover */
+            border: 1px solid #e2e8f0; /* Added a subtle border to make images more visible */
         }
         .image-gallery img:hover {
-            transform: scale(1.03);
+            transform: scale(1.03); /* Slightly enlarge image on hover */
+        }
+        /* Aspect ratio for responsive video embeds */
+        .aspect-w-16 {
+            position: relative;
+            width: 100%;
+        }
+        .aspect-h-9 {
+            padding-bottom: 56.25%; /* 9/16 = 0.5625 */
+        }
+        .aspect-w-16 iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Loading spinner styles */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3b82f6; /* Blue */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
-    <!-- Header -->
+    <!-- Header Section: Contains company logo/name and navigation links -->
     <header class="bg-white shadow-md py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
+            <!-- Company Logo/Name -->
             <h1 class="text-3xl font-bold text-gray-900">DroneInspect Pro</h1>
+            <!-- Navigation Menu -->
             <nav>
                 <ul class="flex space-x-6">
+                    <!-- Public navigation links -->
                     <li><a href="#home" class="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-300">Home</a></li>
                     <li><a href="#services" class="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-300">Services</a></li>
                     <li><a href="#contact" class="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-300">Contact</a></li>
+                    <!-- Customer Login Button (visible when logged out) -->
                     <li><button id="loginBtn" class="btn-primary">Customer Login</button></li>
+                    <!-- Logout Button (hidden by default, visible when logged in) -->
                     <li id="logoutBtnContainer" class="hidden"><button id="logoutBtn" class="btn-primary bg-red-500 hover:bg-red-600">Logout</button></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Area: Contains all sections of the website -->
     <main class="flex-grow">
-        <!-- Home Section -->
+        <!-- Home Section: Hero area with company introduction and key highlights -->
         <section id="home" class="py-16 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-center">
             <div class="container mx-auto px-4">
+                <!-- Main Headline -->
                 <h2 class="text-5xl font-extrabold mb-4 animate-fade-in-down">Revolutionizing Wind Turbine Inspections</h2>
+                <!-- Sub-headline/Description -->
                 <p class="text-xl mb-8 max-w-3xl mx-auto opacity-90 animate-fade-in-up">
                     Utilizing advanced drone technology for precise, safe, and efficient infrastructure scanning.
                     Gain unparalleled insights with our cutting-edge solutions.
                 </p>
+                <!-- Image Cards showcasing different aspects of the service -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
                     <div class="bg-white bg-opacity-20 backdrop-blur-sm p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
                         <img src="https://placehold.co/400x250/3b82f6/ffffff?text=Drone+Scanning" alt="Drone Scanning" class="w-full h-40 object-cover rounded-lg mb-4">
@@ -101,7 +146,7 @@
             </div>
         </section>
 
-        <!-- Services Section (Placeholder) -->
+        <!-- Services Section: Outlines the core services offered by the company -->
         <section id="services" class="py-16 bg-gray-50">
             <div class="container mx-auto px-4 text-center">
                 <h2 class="section-heading">Our Services</h2>
@@ -110,6 +155,7 @@
                     ensuring the longevity and efficiency of your assets.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Individual Service Cards -->
                     <div class="card">
                         <h3 class="text-xl font-semibold mb-2 text-gray-800">Blade Inspection</h3>
                         <p class="text-gray-600">High-resolution visual and thermal inspection for early defect detection.</p>
@@ -126,7 +172,7 @@
             </div>
         </section>
 
-        <!-- Contact Section (Placeholder) -->
+        <!-- Contact Section: Provides a form for inquiries -->
         <section id="contact" class="py-16 bg-white">
             <div class="container mx-auto px-4 text-center">
                 <h2 class="section-heading">Get In Touch</h2>
@@ -135,6 +181,7 @@
                 </p>
                 <div class="max-w-xl mx-auto card">
                     <form class="space-y-4">
+                        <!-- Form fields -->
                         <div>
                             <label for="name" class="block text-left text-gray-700 font-medium mb-1">Name</label>
                             <input type="text" id="name" name="name" class="input-field" placeholder="Your Name">
@@ -147,17 +194,20 @@
                             <label for="message" class="block text-left text-gray-700 font-medium mb-1">Message</label>
                             <textarea id="message" name="message" rows="4" class="input-field" placeholder="Tell us about your needs..."></textarea>
                         </div>
+                        <!-- Submit button for the contact form -->
                         <button type="submit" class="btn-primary w-full">Send Message</button>
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- Login Modal -->
+        <!-- Login Modal: A hidden pop-up for customer authentication -->
         <div id="loginModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
             <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+                <!-- Close button for the modal -->
                 <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
                 <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Customer Login</h2>
+                <!-- Login Form -->
                 <form id="loginForm" class="space-y-5">
                     <div>
                         <label for="username" class="block text-gray-700 font-medium mb-1">Username</label>
@@ -167,131 +217,44 @@
                         <label for="password" class="block text-gray-700 font-medium mb-1">Password</label>
                         <input type="password" id="password" class="input-field" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit" class="btn-primary w-full">Login</button>
-                    <p id="loginMessage" class="text-center text-red-500 mt-3 hidden">Invalid username or password.</p>
+                    <!-- Login submit button -->
+                    <button type="submit" class="btn-primary w-full flex items-center justify-center">
+                        <span id="loginButtonText">Login</span>
+                        <div id="loginSpinner" class="loader ml-2 hidden"></div>
+                    </button>
+                    <!-- Error message for invalid credentials, hidden by default -->
+                    <p id="loginMessage" class="text-center text-red-500 mt-3 hidden"></p>
                 </form>
             </div>
         </div>
 
-        <!-- Customer Dashboard Section -->
+        <!-- Customer Dashboard Section: Visible only after successful login -->
         <section id="customerDashboard" class="py-16 bg-gray-100 hidden">
             <div class="container mx-auto px-4">
                 <h2 class="section-heading text-center mb-10">Welcome, Valued Customer!</h2>
-                <p class="text-center text-lg text-gray-700 mb-12">Here you can access your project data, including images and videos from your turbine inspections.</p>
+                <p class="text-center text-lg text-gray-700 mb-4">Here you can access your project data, including images and videos from your turbine inspections.</p>
+                <!-- Display User ID -->
+                <p id="userIdDisplay" class="text-center text-sm text-gray-600 mb-8">User ID: Loading...</p>
 
-                <!-- Project Overview -->
+                <!-- Project Overview: Dynamically populated list of customer's projects -->
                 <div class="card mb-12">
                     <h3 class="text-2xl font-bold text-gray-900 mb-6">Your Projects</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Project Card 1 -->
-                        <div class="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
-                            <h4 class="text-xl font-semibold text-blue-800 mb-2">Project Alpha - Wind Farm A</h4>
-                            <p class="text-gray-700 mb-2">Location: Coastal Region</p>
-                            <p class="text-gray-700 mb-4">Last Inspection: June 15, 2025</p>
-                            <button class="btn-primary text-sm px-4 py-2" onclick="showProjectDetails('projectAlpha')">View Details</button>
-                        </div>
-                        <!-- Project Card 2 -->
-                        <div class="bg-green-50 p-6 rounded-lg shadow-md border border-green-200">
-                            <h4 class="text-xl font-semibold text-green-800 mb-2">Project Beta - Mountain Site</h4>
-                            <p class="text-gray-700 mb-2">Location: High Altitude</p>
-                            <p class="text-gray-700 mb-4">Last Inspection: May 20, 2025</p>
-                            <button class="btn-primary text-sm px-4 py-2" onclick="showProjectDetails('projectBeta')">View Details</button>
-                        </div>
-                        <!-- Project Card 3 -->
-                        <div class="bg-yellow-50 p-6 rounded-lg shadow-md border border-yellow-200">
-                            <h4 class="text-xl font-semibold text-yellow-800 mb-2">Project Gamma - Offshore</h4>
-                            <p class="text-gray-700 mb-2">Location: Offshore Platform</p>
-                            <p class="text-gray-700 mb-4">Last Inspection: April 10, 2025</p>
-                            <button class="btn-primary text-sm px-4 py-2" onclick="showProjectDetails('projectGamma')">View Details</button>
-                        </div>
+                    <div id="projectListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Project cards will be dynamically inserted here by JavaScript -->
+                        <p id="loadingProjects" class="col-span-full text-center text-gray-500">Loading projects...</p>
                     </div>
                 </div>
 
-                <!-- Project Details Section (Initially hidden) -->
-                <div id="projectAlpha" class="card mt-12 hidden">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Project Alpha Details</h3>
-                    <p class="text-lg text-gray-700 mb-8">Detailed inspection data for Wind Farm A.</p>
-
-                    <div class="mb-10">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Images</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 image-gallery">
-                            <img src="https://placehold.co/300x200/4f46e5/ffffff?text=Turbine+Blade+1" alt="Turbine Blade 1" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/4f46e5/ffffff?text=Turbine+Tower+Section" alt="Turbine Tower Section" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/4f46e5/ffffff?text=Nacelle+View" alt="Nacelle View" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/4f46e5/ffffff?text=Defect+Close-up" alt="Defect Close-up" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/4f46e5/ffffff?text=Thermal+Scan" alt="Thermal Scan" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/4f46e5/ffffff?text=Rotor+Hub" alt="Rotor Hub" class="w-full h-auto object-cover rounded-xl">
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Video</h4>
-                        <div class="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
-                            <!-- Placeholder video. In a real app, this would be a link to your hosted video. -->
-                            <video controls class="w-full h-full object-cover">
-                                <source src="https://www.youtube.com/watch?v=oo88mlzRIwo" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    </div>
-                    <button class="btn-primary mt-8" onclick="hideProjectDetails('projectAlpha')">Back to Projects</button>
-                </div>
-
-                <div id="projectBeta" class="card mt-12 hidden">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Project Beta Details</h3>
-                    <p class="text-lg text-gray-700 mb-8">Detailed inspection data for Mountain Site.</p>
-
-                    <div class="mb-10">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Images</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 image-gallery">
-                            <img src="https://placehold.co/300x200/10b981/ffffff?text=Mountain+Turbine+1" alt="Mountain Turbine 1" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/10b981/ffffff?text=Foundation+View" alt="Foundation View" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/10b981/ffffff?text=Gearbox+Inspection" alt="Gearbox Inspection" class="w-full h-auto object-cover rounded-xl">
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Video</h4>
-                        <div class="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
-                            <video controls class="w-full h-full object-cover">
-                                <source src="https://www.youtube.com/watch?v=oo88mlzRIwo" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    </div>
-                    <button class="btn-primary mt-8" onclick="hideProjectDetails('projectBeta')">Back to Projects</button>
-                </div>
-
-                <div id="projectGamma" class="card mt-12 hidden">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Project Gamma Details</h3>
-                    <p class="text-lg text-gray-700 mb-8">Detailed inspection data for Offshore Platform.</p>
-
-                    <div class="mb-10">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Images</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 image-gallery">
-                            <img src="https://placehold.co/300x200/f59e0b/ffffff?text=Offshore+Turbine+1" alt="Offshore Turbine 1" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/f59e0b/ffffff?text=Platform+View" alt="Platform View" class="w-full h-auto object-cover rounded-xl">
-                            <img src="https://placehold.co/300x200/f59e0b/ffffff?text=Underwater+Base" alt="Underwater Base" class="w-full h-auto object-cover rounded-xl">
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Video</h4>
-                        <div class="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
-                            <video controls class="w-full h-full object-cover">
-                                <source src="https://www.youtube.com/watch?v=oo88mlzRIwo" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    </div>
-                    <button class="btn-primary mt-8" onclick="hideProjectDetails('projectGamma')">Back to Projects</button>
+                <!-- Dynamic Project Details Container (Initially empty and hidden) -->
+                <div id="projectDetailsContainer" class="mt-12">
+                    <!-- Specific project details will be dynamically inserted here -->
                 </div>
 
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer Section -->
     <footer class="bg-gray-800 text-white py-8 mt-auto">
         <div class="container mx-auto px-4 text-center">
             <p>&copy; 2025 DroneInspect Pro. All rights reserved.</p>
@@ -302,108 +265,388 @@
         </div>
     </footer>
 
-    <script>
-        // Get elements
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const logoutBtnContainer = document.getElementById('logoutBtnContainer');
-        const loginModal = document.getElementById('loginModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const loginForm = document.getElementById('loginForm');
-        const customerDashboard = document.getElementById('customerDashboard');
-        const loginMessage = document.getElementById('loginMessage');
-        const publicSections = document.querySelectorAll('section:not(#customerDashboard)'); // All sections except dashboard
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, query, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Simple "authentication" state
-        let isLoggedIn = false;
+        // --- Firebase Initialization ---
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        console.log("App ID:", appId);
+        console.log("Firebase Config:", firebaseConfig);
+        console.log("Initial Auth Token:", initialAuthToken ? "Present" : "Not Present");
+
+
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null; // To store the authenticated user's ID
+        let projectsCache = {}; // Cache to store project data fetched from Firestore
+
+        // Initialize Firebase app
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            console.log("Firebase app, Firestore, and Auth initialized successfully.");
+        } catch (error) {
+            console.error("Error initializing Firebase:", error);
+            document.getElementById('loginMessage').textContent = "Error initializing application. Please try again later.";
+            document.getElementById('loginMessage').classList.remove('hidden');
+        }
+
+        // --- Firebase Authentication State Listener ---
+        // This listener ensures that Firestore operations only run after authentication is ready
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                document.getElementById('userIdDisplay').textContent = `User ID: ${currentUserId}`;
+                console.log("Firebase Auth State Changed: Logged in as", currentUserId);
+                // After authentication, ensure initial data exists and then load projects
+                await seedInitialData(currentUserId);
+                loadUserProjects(currentUserId);
+                updateUI(); // Update UI after successful login and data load
+            } else {
+                currentUserId = null;
+                document.getElementById('userIdDisplay').textContent = `User ID: Not logged in`;
+                console.log("Firebase Auth State Changed: Logged out");
+                // If logged out, hide dashboard and show public sections
+                updateUI();
+            }
+        });
+
+        // --- Data Seeding Function (for demonstration purposes) ---
+        async function seedInitialData(userId) {
+            if (!db) {
+                console.error("Firestore not initialized, cannot seed data.");
+                return;
+            }
+            const userProjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/customerProjects`);
+            let snapshot;
+            try {
+                snapshot = await getDocs(userProjectsCollectionRef);
+            } catch (error) {
+                console.error("Error checking for existing data:", error);
+                // Handle security rule errors or network issues here
+                return;
+            }
+
+
+            // Only seed if no projects exist for this user
+            if (snapshot.empty) {
+                console.log("Seeding initial data for user:", userId);
+                try {
+                    await setDoc(doc(userProjectsCollectionRef, "projectAlpha"), {
+                        projectName: "Project Alpha - Wind Farm A",
+                        location: "Coastal Region",
+                        lastInspection: "June 15, 2025",
+                        images: [
+                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Turbine+Overview",
+                            "https://forcetechnology.com/-/media/force-technology-media/images/services/services-inspection/drone-inspection/billeder-til-nye-dronesider/drone-inspection-of-wind-turbine-blade-crop.jpg?as=1&w=623&r=a7190211-3137-4ea7-a1d3-83964eb01344", // Turbine blade image
+                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Nacelle+Detail",
+                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Tower+Crack",
+                            "https://forcetechnology.com/-/media/force-technology-media/images/services/services-inspection/drone-inspection/billeder-til-nye-dronesider/ir-turbine-cmyk.jpg?as=1&w=623&r=f6c98494-29dd-45a5-92d6-614b394d0c8d", // Thermal image
+                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Rotor+Hub+Corrosion",
+                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Foundation+Erosion",
+                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Gearbox+Leak"
+                        ],
+                        videoYoutubeId: "oo88mlzRIwo" // YouTube video ID
+                    });
+                    await setDoc(doc(userProjectsCollectionRef, "projectBeta"), {
+                        projectName: "Project Beta - Mountain Site",
+                        location: "High Altitude",
+                        lastInspection: "May 20, 2025",
+                        images: [
+                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Mountain+View",
+                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Blade+Tip",
+                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Tower+Section",
+                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Nacelle+Top",
+                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Foundation+Crack",
+                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Access+Road+Condition"
+                        ],
+                        videoYoutubeId: "oo88mlzRIwo" // YouTube video ID
+                    });
+                    await setDoc(doc(userProjectsCollectionRef, "projectGamma"), {
+                        projectName: "Project Gamma - Offshore",
+                        location: "Offshore Platform",
+                        lastInspection: "April 10, 2025",
+                        images: [
+                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Offshore+Overview",
+                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Platform+Corrosion",
+                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Underwater+Piling",
+                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Blade+Leading+Edge",
+                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Nacelle+Exterior",
+                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Substructure+Integrity"
+                        ],
+                        videoYoutubeId: "oo88mlzRIwo" // YouTube video ID
+                    });
+                    console.log("Initial data seeded successfully.");
+                } catch (e) {
+                    console.error("Error seeding data:", e);
+                }
+            } else {
+                console.log("Data already exists for user, skipping seeding.");
+            }
+        }
+
+        // --- Fetch and Render User Projects from Firestore ---
+        function loadUserProjects(userId) {
+            if (!db || !userId) {
+                console.warn("Firestore or User ID not available to load projects. Skipping project load.");
+                return;
+            }
+
+            const projectListContainer = document.getElementById('projectListContainer');
+            const loadingProjects = document.getElementById('loadingProjects');
+            const projectDetailsContainer = document.getElementById('projectDetailsContainer');
+
+            // Clear previous content and show loading
+            projectListContainer.innerHTML = '';
+            projectDetailsContainer.innerHTML = '';
+            loadingProjects.classList.remove('hidden');
+            console.log("Attempting to load projects for user:", userId);
+
+            const userProjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/customerProjects`);
+            const q = query(userProjectsCollectionRef);
+
+            // Listen for real-time updates to the user's projects
+            onSnapshot(q, (snapshot) => {
+                loadingProjects.classList.add('hidden'); // Hide loading indicator
+                projectListContainer.innerHTML = ''; // Clear previous project cards
+                projectsCache = {}; // Clear cache before populating
+                console.log("Received project snapshot. Number of docs:", snapshot.docs.length);
+
+                if (snapshot.empty) {
+                    projectListContainer.innerHTML = '<p class="col-span-full text-center text-gray-500">No projects found for this user.</p>';
+                    console.log("No projects found for this user.");
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const project = doc.data();
+                    const projectId = doc.id;
+                    projectsCache[projectId] = project; // Store project data in cache
+                    console.log(`Caching and rendering project: ${project.projectName} (ID: ${projectId})`);
+                    const projectCardHtml = `
+                        <div class="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
+                            <h4 class="text-xl font-semibold text-blue-800 mb-2">${project.projectName}</h4>
+                            <p class="text-gray-700 mb-2">Location: ${project.location}</p>
+                            <p class="text-gray-700 mb-4">Last Inspection: ${project.lastInspection}</p>
+                            <button class="btn-primary text-sm px-4 py-2" onclick="showProjectDetails('${projectId}')">View Details</button>
+                        </div>
+                    `;
+                    projectListContainer.insertAdjacentHTML('beforeend', projectCardHtml);
+                });
+            }, (error) => {
+                console.error("Error fetching projects with onSnapshot:", error);
+                loadingProjects.classList.add('hidden');
+                projectListContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading projects. Please try again.</p>';
+            });
+        }
+
+        // --- JavaScript for UI Logic and "Authentication" ---
+
+        // Get references to key HTML elements by their IDs
+        const loginBtn = document.getElementById('loginBtn'); // Button to open login modal
+        const logoutBtn = document.getElementById('logoutBtn'); // Button to log out
+        const logoutBtnContainer = document.getElementById('logoutBtnContainer'); // Container for logout button
+        const loginModal = document.getElementById('loginModal'); // The login pop-up modal
+        const closeModalBtn = document.getElementById('closeModalBtn'); // Button to close login modal
+        const loginForm = document.getElementById('loginForm'); // The login form itself
+        const customerDashboard = document.getElementById('customerDashboard'); // The customer-only content section
+        const loginMessage = document.getElementById('loginMessage'); // Message for login errors
+        const loginButtonText = document.getElementById('loginButtonText'); // Text inside login button
+        const loginSpinner = document.getElementById('loginSpinner'); // Loading spinner inside login button
+
+        // Select all sections that are part of the public-facing website, excluding the customer dashboard
+        const publicSections = document.querySelectorAll('section:not(#customerDashboard)');
 
         // --- Event Listeners ---
 
-        // Open login modal
+        // Event listener for the "Customer Login" button to open the modal
         loginBtn.addEventListener('click', () => {
-            loginModal.classList.remove('hidden');
-        });
-
-        // Close login modal
-        closeModalBtn.addEventListener('click', () => {
-            loginModal.classList.add('hidden');
+            loginModal.classList.remove('hidden'); // Remove 'hidden' class to make the modal visible
             loginMessage.classList.add('hidden'); // Hide any previous error messages
             loginForm.reset(); // Clear form fields
+            loginButtonText.textContent = "Login"; // Reset button text
+            loginSpinner.classList.add('hidden'); // Hide spinner
         });
 
-        // Handle login form submission
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent default form submission
+        // Event listener for the modal's close button (X icon)
+        closeModalBtn.addEventListener('click', () => {
+            loginModal.classList.add('hidden'); // Add 'hidden' class to hide the modal
+            loginMessage.classList.add('hidden'); // Hide any previous login error messages
+            loginForm.reset(); // Clear the username and password fields in the form
+            loginButtonText.textContent = "Login"; // Reset button text
+            loginSpinner.classList.add('hidden'); // Hide spinner
+        });
+
+        // Event listener for the login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission behavior (page reload)
+
+            loginButtonText.textContent = "Logging in..."; // Change button text
+            loginSpinner.classList.remove('hidden'); // Show spinner
+            loginMessage.classList.add('hidden'); // Hide any previous error messages
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Simple hardcoded credentials for demonstration
+            console.log("Attempting login with username:", username);
+
+            // Simple hardcoded credentials for demonstration purposes.
+            // In a real application, this would involve sending credentials to a server for verification
+            // and then obtaining a custom Firebase token to sign in.
             if (username === 'customer' && password === 'password123') {
-                isLoggedIn = true;
-                loginModal.classList.add('hidden'); // Hide modal
-                updateUI(); // Update UI based on login status
-                loginMessage.classList.add('hidden'); // Hide error message
+                try {
+                    // Ensure auth is initialized before attempting sign-in
+                    if (!auth) {
+                        throw new Error("Firebase Auth not initialized.");
+                    }
+
+                    // Sign in with custom token if provided by Canvas, otherwise anonymously
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("Signed in with custom token successfully.");
+                    } else {
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously successfully.");
+                    }
+                    // onAuthStateChanged listener will handle UI update and data loading
+                    loginModal.classList.add('hidden'); // Hide the login modal
+                    loginMessage.classList.add('hidden'); // Ensure error message is hidden
+                } catch (error) {
+                    console.error("Firebase authentication error during login:", error);
+                    loginMessage.textContent = `Login failed: ${error.message || "Unknown error"}`;
+                    loginMessage.classList.remove('hidden'); // Show error message
+                    loginButtonText.textContent = "Login"; // Reset button text
+                    loginSpinner.classList.add('hidden'); // Hide spinner
+                }
             } else {
+                loginMessage.textContent = "Invalid username or password.";
                 loginMessage.classList.remove('hidden'); // Show error message
+                loginButtonText.textContent = "Login"; // Reset button text
+                loginSpinner.classList.add('hidden'); // Hide spinner
+                console.log("Invalid local credentials provided.");
             }
         });
 
-        // Handle logout
-        logoutBtn.addEventListener('click', () => {
-            isLoggedIn = false;
-            updateUI(); // Update UI based on logout status
-            // Hide all project details when logging out
-            document.querySelectorAll('#customerDashboard > .card.mt-12').forEach(el => el.classList.add('hidden'));
+        // Event listener for the "Logout" button
+        logoutBtn.addEventListener('click', async () => {
+            if (!auth) {
+                console.error("Firebase Auth not initialized, cannot sign out.");
+                return;
+            }
+            try {
+                await auth.signOut(); // Sign out from Firebase
+                console.log("User signed out successfully.");
+                // UI update is handled by onAuthStateChanged listener
+            } catch (error) {
+                console.error("Error signing out:", error);
+                // Optionally show a message to the user if logout fails
+            }
         });
 
         // --- UI Update Function ---
+        // This function controls the visibility of different sections based on the 'currentUserId' state
         function updateUI() {
-            if (isLoggedIn) {
-                // Show customer dashboard
-                customerDashboard.classList.remove('hidden');
-                // Hide public sections
-                publicSections.forEach(section => section.classList.add('hidden'));
-                // Show logout button, hide login button
-                loginBtn.classList.add('hidden');
-                logoutBtnContainer.classList.remove('hidden');
+            if (currentUserId) {
+                // If logged in:
+                customerDashboard.classList.remove('hidden'); // Show the customer dashboard
+                publicSections.forEach(section => section.classList.add('hidden')); // Hide all public sections
+                loginBtn.classList.add('hidden'); // Hide the "Customer Login" button
+                logoutBtnContainer.classList.remove('hidden'); // Show the "Logout" button
             } else {
-                // Hide customer dashboard
-                customerDashboard.classList.add('hidden');
-                // Show public sections
-                publicSections.forEach(section => section.classList.remove('hidden'));
-                // Show login button, hide logout button
-                loginBtn.classList.remove('hidden');
-                logoutBtnContainer.classList.add('hidden');
+                // If logged out:
+                customerDashboard.classList.add('hidden'); // Hide the customer dashboard
+                publicSections.forEach(section => section.classList.remove('hidden')); // Show all public sections
+                loginBtn.classList.remove('hidden'); // Show the "Customer Login" button
+                logoutBtnContainer.classList.add('hidden'); // Hide the "Logout" button
+                document.getElementById('projectDetailsContainer').innerHTML = ''; // Clear project details
+                document.getElementById('projectListContainer').innerHTML = '<p id="loadingProjects" class="col-span-full text-center text-gray-500">Please log in to view your projects.</p>'; // Reset project list
             }
         }
 
         // --- Project Details Display Functions ---
-        let currentProjectDetailsId = null;
+        // This function dynamically generates and displays the details for a selected project
+        window.showProjectDetails = function(projectId) { // Only projectId is passed now
+            console.log("showProjectDetails called for Project ID:", projectId);
 
-        function showProjectDetails(projectId) {
-            // Hide all project detail sections first
-            document.querySelectorAll('#customerDashboard > .card.mt-12').forEach(el => el.classList.add('hidden'));
-
-            // Show the requested project detail section
-            const projectDetailElement = document.getElementById(projectId);
-            if (projectDetailElement) {
-                projectDetailElement.classList.remove('hidden');
-                currentProjectDetailsId = projectId;
+            const projectData = projectsCache[projectId]; // Retrieve project data from cache
+            if (!projectData) {
+                console.error("Error: Project data not found in cache for ID:", projectId);
+                // Optionally display a user-friendly message
+                return;
             }
-        }
+            console.log("Retrieved projectData from cache:", projectData);
 
-        function hideProjectDetails(projectId) {
-            const projectDetailElement = document.getElementById(projectId);
-            if (projectDetailElement) {
-                projectDetailElement.classList.add('hidden');
-                currentProjectDetailsId = null;
+            const projectDetailsContainer = document.getElementById('projectDetailsContainer');
+            if (!projectDetailsContainer) {
+                console.error("Error: projectDetailsContainer element not found!");
+                return;
             }
-        }
+            projectDetailsContainer.innerHTML = ''; // Clear previous project details
 
-        // Initial UI update on page load
-        document.addEventListener('DOMContentLoaded', updateUI);
+            // Ensure projectData.images is an array before mapping
+            const imagesHtml = Array.isArray(projectData.images) ? projectData.images.map(imgSrc => `
+                <img src="${imgSrc}" alt="Inspection Image" onerror="this.onerror=null;this.src='https://placehold.co/300x200/cccccc/333333?text=Image+Error';" class="w-full h-auto object-cover rounded-xl">
+            `).join('') : '<p class="text-gray-500">No images available for this project.</p>';
+            console.log("Generated imagesHtml:", imagesHtml);
 
+            const videoEmbedHtml = projectData.videoYoutubeId ? `
+                <div>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Video</h4>
+                    <div class="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
+                        <iframe
+                            src="https://www.youtube.com/embed/${projectData.videoYoutubeId}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            class="w-full h-full"
+                        ></iframe>
+                    </div>
+                </div>
+            ` : '<p class="text-gray-500">No video available for this project.</p>';
+            console.log("Generated videoEmbedHtml:", videoEmbedHtml);
+
+            const projectDetailHtml = `
+                <div id="${projectId}" class="card mt-12">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">${projectData.projectName || 'Project Details'}</h3>
+                    <p class="text-lg text-gray-700 mb-8">Location: ${projectData.location || 'N/A'} | Last Inspection: ${projectData.lastInspection || 'N/A'}</p>
+
+                    <div class="mb-10">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Images</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 image-gallery">
+                            ${imagesHtml}
+                        </div>
+                    </div>
+
+                    ${videoEmbedHtml}
+
+                    <button class="btn-primary mt-8" onclick="hideProjectDetails()">Back to Projects</button>
+                </div>
+            `;
+            projectDetailsContainer.insertAdjacentHTML('beforeend', projectDetailHtml);
+            console.log("Project details HTML inserted.");
+        };
+
+        // Function to hide the project details and show the project list again
+        window.hideProjectDetails = function() {
+            console.log("hideProjectDetails called.");
+            const projectDetailsContainer = document.getElementById('projectDetailsContainer');
+            if (projectDetailsContainer) {
+                projectDetailsContainer.innerHTML = ''; // Clear project details
+            }
+        };
+
+        // Initial UI update on page load (handled by onAuthStateChanged after Firebase init)
+        // The onAuthStateChanged listener will handle the initial UI state once Firebase is ready.
+        // No need for DOMContentLoaded here as onAuthStateChanged covers the initial setup after auth.
     </script>
 </body>
 </html>
