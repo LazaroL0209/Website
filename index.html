@@ -181,15 +181,52 @@
                 </p>
                 <div class="max-w-xl mx-auto card">
                     <form class="space-y-4">
-                        <!-- Form fields -->
+                        <!-- First Name (Mandatory) -->
                         <div>
-                            <label for="name" class="block text-left text-gray-700 font-medium mb-1">Name</label>
-                            <input type="text" id="name" name="name" class="input-field" placeholder="Your Name">
+                            <label for="firstName" class="block text-left text-gray-700 font-medium mb-1">First Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="firstName" name="firstName" class="input-field" placeholder="Your First Name" required>
                         </div>
+                        <!-- Last Name (Mandatory) -->
                         <div>
-                            <label for="email" class="block text-left text-gray-700 font-medium mb-1">Email</label>
-                            <input type="email" id="email" name="email" class="input-field" placeholder="your@example.com">
+                            <label for="lastName" class="block text-left text-gray-700 font-medium mb-1">Last Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="lastName" name="lastName" class="input-field" placeholder="Your Last Name" required>
                         </div>
+                        <!-- Email (Mandatory) -->
+                        <div>
+                            <label for="email" class="block text-left text-gray-700 font-medium mb-1">Email <span class="text-red-500">*</span></label>
+                            <input type="email" id="email" name="email" class="input-field" placeholder="your@example.com" required>
+                        </div>
+                        <!-- Phone Number (Optional) -->
+                        <div>
+                            <label for="phoneNumber" class="block text-left text-gray-700 font-medium mb-1">Phone Number (Optional)</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" class="input-field" placeholder="Your Phone Number">
+                        </div>
+                        <!-- Country (Dropdown) -->
+                        <div>
+                            <label for="country" class="block text-left text-gray-700 font-medium mb-1">Country</label>
+                            <select id="country" name="country" class="input-field">
+                                <option value="">Select your country</option>
+                                <option value="USA">United States</option>
+                                <option value="CAN">Canada</option>
+                                <option value="GBR">United Kingdom</option>
+                                <option value="DEU">Germany</option>
+                                <option value="FRA">France</option>
+                                <option value="AUS">Australia</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <!-- Type of Inspection (Dropdown) -->
+                        <div>
+                            <label for="inspectionType" class="block text-left text-gray-700 font-medium mb-1">Type of Inspection</label>
+                            <select id="inspectionType" name="inspectionType" class="input-field">
+                                <option value="">Select inspection type</option>
+                                <option value="blade">Blade Inspection</option>
+                                <option value="tower">Tower & Foundation Scan</option>
+                                <option value="predictive">Predictive Maintenance</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <!-- Message (Existing) -->
                         <div>
                             <label for="message" class="block text-left text-gray-700 font-medium mb-1">Message</label>
                             <textarea id="message" name="message" rows="4" class="input-field" placeholder="Tell us about your needs..."></textarea>
