@@ -277,9 +277,9 @@
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        console.log("App ID:", appId);
-        console.log("Firebase Config:", firebaseConfig);
-        console.log("Initial Auth Token:", initialAuthToken ? "Present" : "Not Present");
+        console.log("App ID from environment:", appId);
+        console.log("Firebase Config from environment:", firebaseConfig);
+        console.log("Initial Auth Token from environment (presence):", initialAuthToken ? "Present" : "Not Present");
 
 
         let app;
@@ -290,13 +290,14 @@
 
         // Initialize Firebase app
         try {
+            console.log("Attempting to initialize Firebase...");
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
             console.log("Firebase app, Firestore, and Auth initialized successfully.");
         } catch (error) {
-            console.error("Error initializing Firebase:", error);
-            document.getElementById('loginMessage').textContent = "Error initializing application. Please try again later.";
+            console.error("CRITICAL ERROR: Failed to initialize Firebase!", error);
+            document.getElementById('loginMessage').textContent = `Error initializing application: ${error.message}. Please try again later.`;
             document.getElementById('loginMessage').classList.remove('hidden');
         }
 
@@ -306,7 +307,7 @@
             if (user) {
                 currentUserId = user.uid;
                 document.getElementById('userIdDisplay').textContent = `User ID: ${currentUserId}`;
-                console.log("Firebase Auth State Changed: Logged in as", currentUserId);
+                console.log("Firebase Auth State Changed: User is logged in as", currentUserId);
                 // After authentication, ensure initial data exists and then load projects
                 await seedInitialData(currentUserId);
                 loadUserProjects(currentUserId);
@@ -314,7 +315,7 @@
             } else {
                 currentUserId = null;
                 document.getElementById('userIdDisplay').textContent = `User ID: Not logged in`;
-                console.log("Firebase Auth State Changed: Logged out");
+                console.log("Firebase Auth State Changed: User is logged out.");
                 // If logged out, hide dashboard and show public sections
                 updateUI();
             }
@@ -323,23 +324,25 @@
         // --- Data Seeding Function (for demonstration purposes) ---
         async function seedInitialData(userId) {
             if (!db) {
-                console.error("Firestore not initialized, cannot seed data.");
+                console.error("Firestore not initialized, cannot seed data. Aborting seedInitialData.");
                 return;
             }
             const userProjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/customerProjects`);
             let snapshot;
             try {
+                console.log(`Checking if data exists for user ${userId} in path: artifacts/${appId}/users/${userId}/customerProjects`);
                 snapshot = await getDocs(userProjectsCollectionRef);
             } catch (error) {
-                console.error("Error checking for existing data:", error);
-                // Handle security rule errors or network issues here
+                console.error("Error checking for existing data in Firestore:", error);
+                // This could be a security rule issue or network problem.
+                // Inform the user or log more details.
                 return;
             }
 
 
             // Only seed if no projects exist for this user
             if (snapshot.empty) {
-                console.log("Seeding initial data for user:", userId);
+                console.log("No existing projects found for user. Seeding initial data for user:", userId);
                 try {
                     await setDoc(doc(userProjectsCollectionRef, "projectAlpha"), {
                         projectName: "Project Alpha - Wind Farm A",
@@ -475,6 +478,7 @@
             loginForm.reset(); // Clear form fields
             loginButtonText.textContent = "Login"; // Reset button text
             loginSpinner.classList.add('hidden'); // Hide spinner
+            console.log("Login button clicked. Modal opened.");
         });
 
         // Event listener for the modal's close button (X icon)
@@ -484,6 +488,7 @@
             loginForm.reset(); // Clear the username and password fields in the form
             loginButtonText.textContent = "Login"; // Reset button text
             loginSpinner.classList.add('hidden'); // Hide spinner
+            console.log("Login modal closed.");
         });
 
         // Event listener for the login form submission
@@ -497,7 +502,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            console.log("Attempting login with username:", username);
+            console.log("Login form submitted. Attempting login with username:", username);
 
             // Simple hardcoded credentials for demonstration purposes.
             // In a real application, this would involve sending credentials to a server for verification
@@ -506,23 +511,30 @@
                 try {
                     // Ensure auth is initialized before attempting sign-in
                     if (!auth) {
-                        throw new Error("Firebase Auth not initialized.");
+                        throw new Error("Firebase Auth instance is null. Initialization failed earlier.");
                     }
 
+                    console.log("Attempting Firebase sign-in...");
                     // Sign in with custom token if provided by Canvas, otherwise anonymously
                     if (initialAuthToken) {
                         await signInWithCustomToken(auth, initialAuthToken);
-                        console.log("Signed in with custom token successfully.");
+                        console.log("Firebase: Signed in with custom token successfully.");
                     } else {
                         await signInAnonymously(auth);
-                        console.log("Signed in anonymously successfully.");
+                        console.log("Firebase: Signed in anonymously successfully.");
                     }
                     // onAuthStateChanged listener will handle UI update and data loading
                     loginModal.classList.add('hidden'); // Hide the login modal
                     loginMessage.classList.add('hidden'); // Ensure error message is hidden
                 } catch (error) {
                     console.error("Firebase authentication error during login:", error);
-                    loginMessage.textContent = `Login failed: ${error.message || "Unknown error"}`;
+                    let errorMessage = "Login failed. Please try again.";
+                    if (error.code) {
+                        errorMessage = `Login failed: ${error.code.replace('auth/', '').replace(/-/g, ' ')}.`;
+                    } else if (error.message) {
+                        errorMessage = `Login failed: ${error.message}.`;
+                    }
+                    loginMessage.textContent = errorMessage;
                     loginMessage.classList.remove('hidden'); // Show error message
                     loginButtonText.textContent = "Login"; // Reset button text
                     loginSpinner.classList.add('hidden'); // Hide spinner
@@ -532,7 +544,7 @@
                 loginMessage.classList.remove('hidden'); // Show error message
                 loginButtonText.textContent = "Login"; // Reset button text
                 loginSpinner.classList.add('hidden'); // Hide spinner
-                console.log("Invalid local credentials provided.");
+                console.log("Invalid local credentials provided (not Firebase related).");
             }
         });
 
@@ -543,6 +555,7 @@
                 return;
             }
             try {
+                console.log("Attempting Firebase sign-out...");
                 await auth.signOut(); // Sign out from Firebase
                 console.log("User signed out successfully.");
                 // UI update is handled by onAuthStateChanged listener
@@ -561,6 +574,7 @@
                 publicSections.forEach(section => section.classList.add('hidden')); // Hide all public sections
                 loginBtn.classList.add('hidden'); // Hide the "Customer Login" button
                 logoutBtnContainer.classList.remove('hidden'); // Show the "Logout" button
+                console.log("UI updated: Showing dashboard, hiding public sections.");
             } else {
                 // If logged out:
                 customerDashboard.classList.add('hidden'); // Hide the customer dashboard
@@ -569,6 +583,7 @@
                 logoutBtnContainer.classList.add('hidden'); // Hide the "Logout" button
                 document.getElementById('projectDetailsContainer').innerHTML = ''; // Clear project details
                 document.getElementById('projectListContainer').innerHTML = '<p id="loadingProjects" class="col-span-full text-center text-gray-500">Please log in to view your projects.</p>'; // Reset project list
+                console.log("UI updated: Showing public sections, hiding dashboard.");
             }
         }
 
