@@ -234,14 +234,24 @@
                 <h2 class="section-heading text-center mb-10">Welcome, Valued Customer!</h2>
                 <p class="text-center text-lg text-gray-700 mb-4">Here you can access your project data, including images and videos from your turbine inspections.</p>
                 <!-- Display User ID -->
-                <p id="userIdDisplay" class="text-center text-sm text-gray-600 mb-8">User ID: Loading...</p>
+                <p id="userIdDisplay" class="text-center text-sm text-gray-600 mb-8">User ID: mock-user-id</p>
 
-                <!-- Project Overview: Dynamically populated list of customer's projects -->
+                <!-- Project Overview: Placeholder content since Firebase is removed -->
                 <div class="card mb-12">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Your Projects</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Your Projects (Sample Data)</h3>
                     <div id="projectListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Project cards will be dynamically inserted here by JavaScript -->
-                        <p id="loadingProjects" class="col-span-full text-center text-gray-500">Loading projects...</p>
+                        <div class="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
+                            <h4 class="text-xl font-semibold text-blue-800 mb-2">Sample Project A</h4>
+                            <p class="text-gray-700 mb-2">Location: Sample Location</p>
+                            <p class="text-700 mb-4">Last Inspection: July 11, 2025</p>
+                            <p class="text-gray-600 text-sm">This is sample data. Real data would load from a database.</p>
+                        </div>
+                        <div class="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
+                            <h4 class="text-xl font-semibold text-blue-800 mb-2">Sample Project B</h4>
+                            <p class="text-gray-700 mb-2">Location: Another Location</p>
+                            <p class="text-gray-700 mb-4">Last Inspection: July 1, 2025</p>
+                            <p class="text-gray-600 text-sm">This is sample data. Real data would load from a database.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -265,192 +275,10 @@
         </div>
     </footer>
 
-    <!-- Firebase SDK Imports -->
+    <!-- Main JavaScript Logic -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, query, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- Firebase Initialization ---
-        // Global variables provided by the Canvas environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        console.log("App ID from environment:", appId);
-        console.log("Firebase Config from environment:", firebaseConfig);
-        console.log("Initial Auth Token from environment (presence):", initialAuthToken ? "Present" : "Not Present");
-
-
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null; // To store the authenticated user's ID
-        let projectsCache = {}; // Cache to store project data fetched from Firestore
-
-        // Initialize Firebase app
-        try {
-            console.log("Attempting to initialize Firebase...");
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            console.log("Firebase app, Firestore, and Auth initialized successfully.");
-        } catch (error) {
-            console.error("CRITICAL ERROR: Failed to initialize Firebase!", error);
-            document.getElementById('loginMessage').textContent = `Error initializing application: ${error.message}. Please try again later.`;
-            document.getElementById('loginMessage').classList.remove('hidden');
-        }
-
-        // --- Firebase Authentication State Listener ---
-        // This listener ensures that Firestore operations only run after authentication is ready
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                document.getElementById('userIdDisplay').textContent = `User ID: ${currentUserId}`;
-                console.log("Firebase Auth State Changed: User is logged in as", currentUserId);
-                // After authentication, ensure initial data exists and then load projects
-                await seedInitialData(currentUserId);
-                loadUserProjects(currentUserId);
-                updateUI(); // Update UI after successful login and data load
-            } else {
-                currentUserId = null;
-                document.getElementById('userIdDisplay').textContent = `User ID: Not logged in`;
-                console.log("Firebase Auth State Changed: User is logged out.");
-                // If logged out, hide dashboard and show public sections
-                updateUI();
-            }
-        });
-
-        // --- Data Seeding Function (for demonstration purposes) ---
-        async function seedInitialData(userId) {
-            if (!db) {
-                console.error("Firestore not initialized, cannot seed data. Aborting seedInitialData.");
-                return;
-            }
-            const userProjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/customerProjects`);
-            let snapshot;
-            try {
-                console.log(`Checking if data exists for user ${userId} in path: artifacts/${appId}/users/${userId}/customerProjects`);
-                snapshot = await getDocs(userProjectsCollectionRef);
-            } catch (error) {
-                console.error("Error checking for existing data in Firestore:", error);
-                // This could be a security rule issue or network problem.
-                // Inform the user or log more details.
-                return;
-            }
-
-
-            // Only seed if no projects exist for this user
-            if (snapshot.empty) {
-                console.log("No existing projects found for user. Seeding initial data for user:", userId);
-                try {
-                    await setDoc(doc(userProjectsCollectionRef, "projectAlpha"), {
-                        projectName: "Project Alpha - Wind Farm A",
-                        location: "Coastal Region",
-                        lastInspection: "June 15, 2025",
-                        images: [
-                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Turbine+Overview",
-                            "https://forcetechnology.com/-/media/force-technology-media/images/services/services-inspection/drone-inspection/billeder-til-nye-dronesider/drone-inspection-of-wind-turbine-blade-crop.jpg?as=1&w=623&r=a7190211-3137-4ea7-a1d3-83964eb01344", // Turbine blade image
-                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Nacelle+Detail",
-                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Tower+Crack",
-                            "https://forcetechnology.com/-/media/force-technology-media/images/services/services-inspection/drone-inspection/billeder-til-nye-dronesider/ir-turbine-cmyk.jpg?as=1&w=623&r=f6c98494-29dd-45a5-92d6-614b394d0c8d", // Thermal image
-                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Rotor+Hub+Corrosion",
-                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Foundation+Erosion",
-                            "https://placehold.co/300x200/4f46e5/ffffff?text=Alpha+Gearbox+Leak"
-                        ],
-                        videoYoutubeId: "oo88mlzRIwo" // YouTube video ID
-                    });
-                    await setDoc(doc(userProjectsCollectionRef, "projectBeta"), {
-                        projectName: "Project Beta - Mountain Site",
-                        location: "High Altitude",
-                        lastInspection: "May 20, 2025",
-                        images: [
-                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Mountain+View",
-                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Blade+Tip",
-                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Tower+Section",
-                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Nacelle+Top",
-                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Foundation+Crack",
-                            "https://placehold.co/300x200/10b981/ffffff?text=Beta+Access+Road+Condition"
-                        ],
-                        videoYoutubeId: "oo88mlzRIwo" // YouTube video ID
-                    });
-                    await setDoc(doc(userProjectsCollectionRef, "projectGamma"), {
-                        projectName: "Project Gamma - Offshore",
-                        location: "Offshore Platform",
-                        lastInspection: "April 10, 2025",
-                        images: [
-                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Offshore+Overview",
-                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Platform+Corrosion",
-                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Underwater+Piling",
-                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Blade+Leading+Edge",
-                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Nacelle+Exterior",
-                            "https://placehold.co/300x200/f59e0b/ffffff?text=Gamma+Substructure+Integrity"
-                        ],
-                        videoYoutubeId: "oo88mlzRIwo" // YouTube video ID
-                    });
-                    console.log("Initial data seeded successfully.");
-                } catch (e) {
-                    console.error("Error seeding data:", e);
-                }
-            } else {
-                console.log("Data already exists for user, skipping seeding.");
-            }
-        }
-
-        // --- Fetch and Render User Projects from Firestore ---
-        function loadUserProjects(userId) {
-            if (!db || !userId) {
-                console.warn("Firestore or User ID not available to load projects. Skipping project load.");
-                return;
-            }
-
-            const projectListContainer = document.getElementById('projectListContainer');
-            const loadingProjects = document.getElementById('loadingProjects');
-            const projectDetailsContainer = document.getElementById('projectDetailsContainer');
-
-            // Clear previous content and show loading
-            projectListContainer.innerHTML = '';
-            projectDetailsContainer.innerHTML = '';
-            loadingProjects.classList.remove('hidden');
-            console.log("Attempting to load projects for user:", userId);
-
-            const userProjectsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/customerProjects`);
-            const q = query(userProjectsCollectionRef);
-
-            // Listen for real-time updates to the user's projects
-            onSnapshot(q, (snapshot) => {
-                loadingProjects.classList.add('hidden'); // Hide loading indicator
-                projectListContainer.innerHTML = ''; // Clear previous project cards
-                projectsCache = {}; // Clear cache before populating
-                console.log("Received project snapshot. Number of docs:", snapshot.docs.length);
-
-                if (snapshot.empty) {
-                    projectListContainer.innerHTML = '<p class="col-span-full text-center text-gray-500">No projects found for this user.</p>';
-                    console.log("No projects found for this user.");
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    const project = doc.data();
-                    const projectId = doc.id;
-                    projectsCache[projectId] = project; // Store project data in cache
-                    console.log(`Caching and rendering project: ${project.projectName} (ID: ${projectId})`);
-                    const projectCardHtml = `
-                        <div class="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
-                            <h4 class="text-xl font-semibold text-blue-800 mb-2">${project.projectName}</h4>
-                            <p class="text-gray-700 mb-2">Location: ${project.location}</p>
-                            <p class="text-gray-700 mb-4">Last Inspection: ${project.lastInspection}</p>
-                            <button class="btn-primary text-sm px-4 py-2" onclick="showProjectDetails('${projectId}')">View Details</button>
-                        </div>
-                    `;
-                    projectListContainer.insertAdjacentHTML('beforeend', projectCardHtml);
-                });
-            }, (error) => {
-                console.error("Error fetching projects with onSnapshot:", error);
-                loadingProjects.classList.add('hidden');
-                projectListContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading projects. Please try again.</p>';
-            });
-        }
+        // --- Global variables for UI state ---
+        let currentUserId = null; // To track login status
 
         // --- JavaScript for UI Logic and "Authentication" ---
 
@@ -465,6 +293,7 @@
         let loginMessage;
         let loginButtonText;
         let loginSpinner;
+        let userIdDisplay; // Added for direct access
 
         // Select all sections that are part of the public-facing website, excluding the customer dashboard
         const publicSections = document.querySelectorAll('section:not(#customerDashboard)');
@@ -472,7 +301,7 @@
         // --- DOMContentLoaded Event Listener ---
         // This ensures all HTML elements are loaded before attempting to attach event listeners
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM Content Loaded. Attaching event listeners...");
+            console.log("DOM Content Loaded event fired. Attaching event listeners...");
 
             loginBtn = document.getElementById('loginBtn');
             logoutBtn = document.getElementById('logoutBtn');
@@ -484,6 +313,7 @@
             loginMessage = document.getElementById('loginMessage');
             loginButtonText = document.getElementById('loginButtonText');
             loginSpinner = document.getElementById('loginSpinner');
+            userIdDisplay = document.getElementById('userIdDisplay');
 
             // Verify elements are found after DOMContentLoaded
             console.log("Login Button element found:", loginBtn);
@@ -491,6 +321,7 @@
             console.log("Close Modal Button element found:", closeModalBtn);
             console.log("Login Form element found:", loginForm);
             console.log("Logout Button element found:", logoutBtn);
+            console.log("User ID Display element found:", userIdDisplay);
 
 
             // Event listener for the "Customer Login" button to open the modal
@@ -500,7 +331,14 @@
                     if (loginModal) {
                         console.log("Login modal classList BEFORE removing hidden:", loginModal.classList.value);
                         loginModal.classList.remove('hidden');
+                        // Explicitly set display and opacity for debugging visibility issues
+                        loginModal.style.display = 'flex'; // Ensure it's displayed as flex for centering
+                        loginModal.style.opacity = '1'; // Ensure it's not transparent
+                        loginModal.style.visibility = 'visible'; // Ensure it's visible
                         console.log("Login modal classList AFTER removing hidden:", loginModal.classList.value);
+                        console.log("Login modal computed style display:", window.getComputedStyle(loginModal).display);
+                        console.log("Login modal computed style opacity:", window.getComputedStyle(loginModal).opacity);
+                        console.log("Login modal computed style visibility:", window.getComputedStyle(loginModal).visibility);
                     } else {
                         console.error("Login modal (loginModal) not found when login button clicked!");
                     }
@@ -529,6 +367,10 @@
                 closeModalBtn.addEventListener('click', () => {
                     if (loginModal) {
                         loginModal.classList.add('hidden');
+                        // Reset explicit styles when closing
+                        loginModal.style.display = ''; // Revert to CSS default or Tailwind's hidden
+                        loginModal.style.opacity = '';
+                        loginModal.style.visibility = '';
                     }
                     if (loginMessage) {
                         loginMessage.classList.add('hidden');
@@ -570,46 +412,23 @@
 
                     console.log("Login form submitted. Attempting login with username:", username);
 
+                    // Simplified client-side authentication
                     if (username === 'customer' && password === 'password123') {
-                        try {
-                            if (!auth) {
-                                throw new Error("Firebase Auth instance is null. Initialization failed earlier.");
-                            }
-
-                            console.log("Attempting Firebase sign-in...");
-                            if (initialAuthToken) {
-                                await signInWithCustomToken(auth, initialAuthToken);
-                                console.log("Firebase: Signed in with custom token successfully.");
-                            } else {
-                                await signInAnonymously(auth);
-                                console.log("Firebase: Signed in anonymously successfully.");
-                            }
-                            if (loginModal) {
-                                loginModal.classList.add('hidden');
-                            }
-                            if (loginMessage) {
-                                loginMessage.classList.add('hidden');
-                            }
-                        } catch (error) {
-                            console.error("Firebase authentication error during login:", error);
-                            let errorMessage = "Login failed. Please try again.";
-                            if (error.code) {
-                                errorMessage = `Login failed: ${error.code.replace('auth/', '').replace(/-/g, ' ')}.`;
-                            } else if (error.message) {
-                                errorMessage = `Login failed: ${error.message}.`;
-                            }
-                            if (loginMessage) {
-                                loginMessage.textContent = errorMessage;
-                                loginMessage.classList.remove('hidden');
-                            }
-                            if (loginButtonText) {
-                                loginButtonText.textContent = "Login";
-                            }
-                            if (loginSpinner) {
-                                loginSpinner.classList.add('hidden');
-                            }
+                        console.log("Client-side login successful.");
+                        currentUserId = 'mock-user-id-12345'; // Assign a mock user ID
+                        if (loginModal) {
+                            loginModal.classList.add('hidden');
+                            // Reset explicit styles when login is successful
+                            loginModal.style.display = '';
+                            loginModal.style.opacity = '';
+                            loginModal.style.visibility = '';
                         }
+                        if (loginMessage) {
+                            loginMessage.classList.add('hidden');
+                        }
+                        updateUI(); // Update UI after successful login
                     } else {
+                        console.log("Client-side login failed: Invalid credentials.");
                         if (loginMessage) {
                             loginMessage.textContent = "Invalid username or password.";
                             loginMessage.classList.remove('hidden');
@@ -620,7 +439,6 @@
                         if (loginSpinner) {
                             loginSpinner.classList.add('hidden');
                         }
-                        console.log("Invalid local credentials provided (not Firebase related).");
                     }
                 });
                 console.log("Login form (loginForm) event listener attached.");
@@ -631,18 +449,11 @@
 
             // Event listener for the "Logout" button
             if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                    if (!auth) {
-                        console.error("Firebase Auth not initialized, cannot sign out.");
-                        return;
-                    }
-                    try {
-                        console.log("Attempting Firebase sign-out...");
-                        await auth.signOut();
-                        console.log("User signed out successfully.");
-                    } catch (error) {
-                        console.error("Error signing out:", error);
-                    }
+                logoutBtn.addEventListener('click', () => {
+                    console.log("Logout button clicked.");
+                    currentUserId = null; // Clear user ID on logout
+                    updateUI(); // Update UI after logout
+                    console.log("User logged out successfully.");
                 });
                 console.log("Logout button (logoutBtn) event listener attached.");
             } else {
@@ -669,6 +480,9 @@
                 if (logoutBtnContainer) {
                     logoutBtnContainer.classList.remove('hidden'); // Show the "Logout" button
                 }
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `User ID: ${currentUserId}`; // Update displayed user ID
+                }
                 console.log("UI updated: Showing dashboard, hiding public sections.");
             } else {
                 // If logged out:
@@ -682,87 +496,44 @@
                 if (logoutBtnContainer) {
                     logoutBtnContainer.classList.add('hidden'); // Hide the "Logout" button
                 }
+                // Clear project details and reset project list on logout
                 const projectDetailsContainer = document.getElementById('projectDetailsContainer');
                 if (projectDetailsContainer) {
-                    projectDetailsContainer.innerHTML = ''; // Clear project details
+                    projectDetailsContainer.innerHTML = '';
                 }
                 const projectListContainer = document.getElementById('projectListContainer');
                 if (projectListContainer) {
-                    projectListContainer.innerHTML = '<p id="loadingProjects" class="col-span-full text-center text-gray-500">Please log in to view your projects.</p>'; // Reset project list
+                    projectListContainer.innerHTML = '<p id="loadingProjects" class="col-span-full text-center text-gray-500">Please log in to view your projects.</p>';
+                }
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `User ID: Not logged in`; // Reset displayed user ID
                 }
                 console.log("UI updated: Showing public sections, hiding dashboard.");
             }
         }
 
-        // --- Project Details Display Functions ---
-        // This function dynamically generates and displays the details for a selected project
-        window.showProjectDetails = function(projectId) { // Only projectId is passed now
+        // --- Placeholder Project Details Display Functions (since Firebase is removed) ---
+        // These functions are kept as placeholders but will not fetch dynamic data.
+        window.showProjectDetails = function(projectId) {
             console.log("showProjectDetails called for Project ID:", projectId);
-
-            const projectData = projectsCache[projectId]; // Retrieve project data from cache
-            if (!projectData) {
-                console.error("Error: Project data not found in cache for ID:", projectId);
-                // Optionally display a user-friendly message
-                return;
-            }
-            console.log("Retrieved projectData from cache:", projectData);
-
             const projectDetailsContainer = document.getElementById('projectDetailsContainer');
-            if (!projectDetailsContainer) {
-                console.error("Error: projectDetailsContainer element not found!");
-                return;
+            if (projectDetailsContainer) {
+                projectDetailsContainer.innerHTML = `
+                    <div class="card mt-12">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Details for ${projectId} (Sample)</h3>
+                        <p class="text-lg text-gray-700 mb-8">This section would show dynamic project details, images, and videos if connected to a database.</p>
+                        <p class="text-gray-600">For now, this is static content. You can re-integrate Firebase later for full functionality.</p>
+                        <button class="btn-primary mt-8" onclick="hideProjectDetails()">Back to Projects</button>
+                    </div>
+                `;
             }
-            projectDetailsContainer.innerHTML = ''; // Clear previous project details
-
-            // Ensure projectData.images is an array before mapping
-            const imagesHtml = Array.isArray(projectData.images) ? projectData.images.map(imgSrc => `
-                <img src="${imgSrc}" alt="Inspection Image" onerror="this.onerror=null;this.src='https://placehold.co/300x200/cccccc/333333?text=Image+Error';" class="w-full h-auto object-cover rounded-xl">
-            `).join('') : '<p class="text-gray-500">No images available for this project.</p>';
-            console.log("Generated imagesHtml:", imagesHtml);
-
-            const videoEmbedHtml = projectData.videoYoutubeId ? `
-                <div>
-                    <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Video</h4>
-                    <div class="aspect-w-16 aspect-h-9 rounded-xl overflow-hidden shadow-lg">
-                        <iframe
-                            src="https://www.youtube.com/embed/${projectData.videoYoutubeId}"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                            class="w-full h-full"
-                        ></iframe>
-                    </div>
-                </div>
-            ` : '<p class="text-gray-500">No video available for this project.</p>';
-            console.log("Generated videoEmbedHtml:", videoEmbedHtml);
-
-            const projectDetailHtml = `
-                <div id="${projectId}" class="card mt-12">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">${projectData.projectName || 'Project Details'}</h3>
-                    <p class="text-lg text-gray-700 mb-8">Location: ${projectData.location || 'N/A'} | Last Inspection: ${projectData.lastInspection || 'N/A'}</p>
-
-                    <div class="mb-10">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Inspection Images</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 image-gallery">
-                            ${imagesHtml}
-                        </div>
-                    </div>
-
-                    ${videoEmbedHtml}
-
-                    <button class="btn-primary mt-8" onclick="hideProjectDetails()">Back to Projects</button>
-                </div>
-            `;
-            projectDetailsContainer.insertAdjacentHTML('beforeend', projectDetailHtml);
-            console.log("Project details HTML inserted.");
         };
 
-        // Function to hide the project details and show the project list again
         window.hideProjectDetails = function() {
             console.log("hideProjectDetails called.");
             const projectDetailsContainer = document.getElementById('projectDetailsContainer');
             if (projectDetailsContainer) {
-                projectDetailsContainer.innerHTML = ''; // Clear project details
+                projectDetailsContainer.innerHTML = '';
             }
         };
     </script>
