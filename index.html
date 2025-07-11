@@ -455,181 +455,203 @@
         // --- JavaScript for UI Logic and "Authentication" ---
 
         // Get references to key HTML elements by their IDs
-        const loginBtn = document.getElementById('loginBtn'); // Button to open login modal
-        const logoutBtn = document.getElementById('logoutBtn'); // Button to log out
-        const logoutBtnContainer = document.getElementById('logoutBtnContainer'); // Container for logout button
-        const loginModal = document.getElementById('loginModal'); // The login pop-up modal
-        const closeModalBtn = document.getElementById('closeModalBtn'); // Button to close login modal
-        const loginForm = document.getElementById('loginForm'); // The login form itself
-        const customerDashboard = document.getElementById('customerDashboard'); // The customer-only content section
-        const loginMessage = document.getElementById('loginMessage'); // Message for login errors
-        const loginButtonText = document.getElementById('loginButtonText'); // Text inside login button
-        const loginSpinner = document.getElementById('loginSpinner'); // Loading spinner inside login button
-
-        // Verify elements are found
-        console.log("Login Button element found:", loginBtn);
-        console.log("Login Modal element found:", loginModal);
-
+        let loginBtn;
+        let logoutBtn;
+        let logoutBtnContainer;
+        let loginModal;
+        let closeModalBtn;
+        let loginForm;
+        let customerDashboard;
+        let loginMessage;
+        let loginButtonText;
+        let loginSpinner;
 
         // Select all sections that are part of the public-facing website, excluding the customer dashboard
         const publicSections = document.querySelectorAll('section:not(#customerDashboard)');
 
-        // --- Event Listeners ---
+        // --- DOMContentLoaded Event Listener ---
+        // This ensures all HTML elements are loaded before attempting to attach event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Content Loaded. Attaching event listeners...");
 
-        // Event listener for the "Customer Login" button to open the modal
-        if (loginBtn) { // Add check to ensure element exists before adding listener
-            loginBtn.addEventListener('click', () => {
-                if (loginModal) { // Add check to ensure modal element exists
-                    loginModal.classList.remove('hidden'); // Remove 'hidden' class to make the modal visible
-                }
-                if (loginMessage) {
-                    loginMessage.classList.add('hidden'); // Hide any previous error messages
-                }
-                if (loginForm) {
-                    loginForm.reset(); // Clear form fields
-                }
-                if (loginButtonText) {
-                    loginButtonText.textContent = "Login"; // Reset button text
-                }
-                if (loginSpinner) {
-                    loginSpinner.classList.add('hidden'); // Hide spinner
-                }
-                console.log("Login button clicked. Modal opened.");
-            });
-        } else {
-            console.error("Login button (loginBtn) not found!");
-        }
+            loginBtn = document.getElementById('loginBtn');
+            logoutBtn = document.getElementById('logoutBtn');
+            logoutBtnContainer = document.getElementById('logoutBtnContainer');
+            loginModal = document.getElementById('loginModal');
+            closeModalBtn = document.getElementById('closeModalBtn');
+            loginForm = document.getElementById('loginForm');
+            customerDashboard = document.getElementById('customerDashboard');
+            loginMessage = document.getElementById('loginMessage');
+            loginButtonText = document.getElementById('loginButtonText');
+            loginSpinner = document.getElementById('loginSpinner');
+
+            // Verify elements are found after DOMContentLoaded
+            console.log("Login Button element found:", loginBtn);
+            console.log("Login Modal element found:", loginModal);
+            console.log("Close Modal Button element found:", closeModalBtn);
+            console.log("Login Form element found:", loginForm);
+            console.log("Logout Button element found:", logoutBtn);
 
 
-        // Event listener for the modal's close button (X icon)
-        if (closeModalBtn) {
-            closeModalBtn.addEventListener('click', () => {
-                if (loginModal) {
-                    loginModal.classList.add('hidden'); // Add 'hidden' class to hide the modal
-                }
-                if (loginMessage) {
-                    loginMessage.classList.add('hidden'); // Hide any previous login error messages
-                }
-                if (loginForm) {
-                    loginForm.reset(); // Clear the username and password fields in the form
-                }
-                if (loginButtonText) {
-                    loginButtonText.textContent = "Login"; // Reset button text
-                }
-                if (loginSpinner) {
-                    loginSpinner.classList.add('hidden'); // Hide spinner
-                }
-                console.log("Login modal closed.");
-            });
-        } else {
-            console.error("Close modal button (closeModalBtn) not found!");
-        }
-
-
-        // Event listener for the login form submission
-        if (loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault(); // Prevent the default form submission behavior (page reload)
-
-                if (loginButtonText) {
-                    loginButtonText.textContent = "Logging in..."; // Change button text
-                }
-                if (loginSpinner) {
-                    loginSpinner.classList.remove('hidden'); // Show spinner
-                }
-                if (loginMessage) {
-                    loginMessage.classList.add('hidden'); // Hide any previous error messages
-                }
-
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-
-                console.log("Login form submitted. Attempting login with username:", username);
-
-                // Simple hardcoded credentials for demonstration purposes.
-                // In a real application, this would involve sending credentials to a server for verification
-                // and then obtaining a custom Firebase token to sign in.
-                if (username === 'customer' && password === 'password123') {
-                    try {
-                        // Ensure auth is initialized before attempting sign-in
-                        if (!auth) {
-                            throw new Error("Firebase Auth instance is null. Initialization failed earlier.");
-                        }
-
-                        console.log("Attempting Firebase sign-in...");
-                        // Sign in with custom token if provided by Canvas, otherwise anonymously
-                        if (initialAuthToken) {
-                            await signInWithCustomToken(auth, initialAuthToken);
-                            console.log("Firebase: Signed in with custom token successfully.");
-                        } else {
-                            await signInAnonymously(auth);
-                            console.log("Firebase: Signed in anonymously successfully.");
-                        }
-                        // onAuthStateChanged listener will handle UI update and data loading
-                        if (loginModal) {
-                            loginModal.classList.add('hidden'); // Hide the login modal
-                        }
-                        if (loginMessage) {
-                            loginMessage.classList.add('hidden'); // Ensure error message is hidden
-                        }
-                    } catch (error) {
-                        console.error("Firebase authentication error during login:", error);
-                        let errorMessage = "Login failed. Please try again.";
-                        if (error.code) {
-                            errorMessage = `Login failed: ${error.code.replace('auth/', '').replace(/-/g, ' ')}.`;
-                        } else if (error.message) {
-                            errorMessage = `Login failed: ${error.message}.`;
-                        }
-                        if (loginMessage) {
-                            loginMessage.textContent = errorMessage;
-                            loginMessage.classList.remove('hidden'); // Show error message
-                        }
-                        if (loginButtonText) {
-                            loginButtonText.textContent = "Login"; // Reset button text
-                        }
-                        if (loginSpinner) {
-                            loginSpinner.classList.add('hidden'); // Hide spinner
-                        }
+            // Event listener for the "Customer Login" button to open the modal
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    console.log("Login button clicked.");
+                    if (loginModal) {
+                        console.log("Login modal classList BEFORE removing hidden:", loginModal.classList.value);
+                        loginModal.classList.remove('hidden');
+                        console.log("Login modal classList AFTER removing hidden:", loginModal.classList.value);
+                    } else {
+                        console.error("Login modal (loginModal) not found when login button clicked!");
                     }
-                } else {
                     if (loginMessage) {
-                        loginMessage.textContent = "Invalid username or password.";
-                        loginMessage.classList.remove('hidden'); // Show error message
+                        loginMessage.classList.add('hidden');
+                    }
+                    if (loginForm) {
+                        loginForm.reset();
                     }
                     if (loginButtonText) {
-                        loginButtonText.textContent = "Login"; // Reset button text
+                        loginButtonText.textContent = "Login";
                     }
                     if (loginSpinner) {
-                        loginSpinner.classList.add('hidden'); // Hide spinner
+                        loginSpinner.classList.add('hidden');
                     }
-                    console.log("Invalid local credentials provided (not Firebase related).");
-                }
-            });
-        } else {
-            console.error("Login form (loginForm) not found!");
-        }
+                    console.log("Modal opening logic executed.");
+                });
+                console.log("Login button (loginBtn) event listener attached.");
+            } else {
+                console.error("Login button (loginBtn) not found!");
+            }
 
 
-        // Event listener for the "Logout" button
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', async () => {
-                if (!auth) {
-                    console.error("Firebase Auth not initialized, cannot sign out.");
-                    return;
-                }
-                try {
-                    console.log("Attempting Firebase sign-out...");
-                    await auth.signOut(); // Sign out from Firebase
-                    console.log("User signed out successfully.");
-                    // UI update is handled by onAuthStateChanged listener
-                } catch (error) {
-                    console.error("Error signing out:", error);
-                    // Optionally show a message to the user if logout fails
-                }
-            });
-        } else {
-            console.error("Logout button (logoutBtn) not found!");
-        }
+            // Event listener for the modal's close button (X icon)
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', () => {
+                    if (loginModal) {
+                        loginModal.classList.add('hidden');
+                    }
+                    if (loginMessage) {
+                        loginMessage.classList.add('hidden');
+                    }
+                    if (loginForm) {
+                        loginForm.reset();
+                    }
+                    if (loginButtonText) {
+                        loginButtonText.textContent = "Login";
+                    }
+                    if (loginSpinner) {
+                        loginSpinner.classList.add('hidden');
+                    }
+                    console.log("Login modal closed.");
+                });
+                console.log("Login modal close button (closeModalBtn) event listener attached.");
+            } else {
+                console.error("Close modal button (closeModalBtn) not found!");
+            }
+
+
+            // Event listener for the login form submission
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    if (loginButtonText) {
+                        loginButtonText.textContent = "Logging in...";
+                    }
+                    if (loginSpinner) {
+                        loginSpinner.classList.remove('hidden');
+                    }
+                    if (loginMessage) {
+                        loginMessage.classList.add('hidden');
+                    }
+
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+
+                    console.log("Login form submitted. Attempting login with username:", username);
+
+                    if (username === 'customer' && password === 'password123') {
+                        try {
+                            if (!auth) {
+                                throw new Error("Firebase Auth instance is null. Initialization failed earlier.");
+                            }
+
+                            console.log("Attempting Firebase sign-in...");
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                                console.log("Firebase: Signed in with custom token successfully.");
+                            } else {
+                                await signInAnonymously(auth);
+                                console.log("Firebase: Signed in anonymously successfully.");
+                            }
+                            if (loginModal) {
+                                loginModal.classList.add('hidden');
+                            }
+                            if (loginMessage) {
+                                loginMessage.classList.add('hidden');
+                            }
+                        } catch (error) {
+                            console.error("Firebase authentication error during login:", error);
+                            let errorMessage = "Login failed. Please try again.";
+                            if (error.code) {
+                                errorMessage = `Login failed: ${error.code.replace('auth/', '').replace(/-/g, ' ')}.`;
+                            } else if (error.message) {
+                                errorMessage = `Login failed: ${error.message}.`;
+                            }
+                            if (loginMessage) {
+                                loginMessage.textContent = errorMessage;
+                                loginMessage.classList.remove('hidden');
+                            }
+                            if (loginButtonText) {
+                                loginButtonText.textContent = "Login";
+                            }
+                            if (loginSpinner) {
+                                loginSpinner.classList.add('hidden');
+                            }
+                        }
+                    } else {
+                        if (loginMessage) {
+                            loginMessage.textContent = "Invalid username or password.";
+                            loginMessage.classList.remove('hidden');
+                        }
+                        if (loginButtonText) {
+                            loginButtonText.textContent = "Login";
+                        }
+                        if (loginSpinner) {
+                            loginSpinner.classList.add('hidden');
+                        }
+                        console.log("Invalid local credentials provided (not Firebase related).");
+                    }
+                });
+                console.log("Login form (loginForm) event listener attached.");
+            } else {
+                console.error("Login form (loginForm) not found!");
+            }
+
+
+            // Event listener for the "Logout" button
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    if (!auth) {
+                        console.error("Firebase Auth not initialized, cannot sign out.");
+                        return;
+                    }
+                    try {
+                        console.log("Attempting Firebase sign-out...");
+                        await auth.signOut();
+                        console.log("User signed out successfully.");
+                    } catch (error) {
+                        console.error("Error signing out:", error);
+                    }
+                });
+                console.log("Logout button (logoutBtn) event listener attached.");
+            } else {
+                console.error("Logout button (logoutBtn) not found!");
+            }
+
+            // Initial UI update call after all elements are guaranteed to be loaded and listeners attached
+            updateUI();
+        });
 
 
         // --- UI Update Function ---
@@ -743,10 +765,6 @@
                 projectDetailsContainer.innerHTML = ''; // Clear project details
             }
         };
-
-        // Initial UI update on page load (handled by onAuthStateChanged after Firebase init)
-        // The onAuthStateChanged listener will handle the initial UI state once Firebase is ready.
-        // No need for DOMContentLoaded here as onAuthStateChanged covers the initial setup after auth.
     </script>
 </body>
 </html>
