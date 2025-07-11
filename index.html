@@ -177,10 +177,10 @@
             <div class="container mx-auto px-4 text-center">
                 <h2 class="section-heading">Get In Touch</h2>
                 <p class="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-                    Ready to optimize your wind turbine inspections? Contact us today for a consultation or demo.
+                    To learn more about our inspection services, Insights software, or pricing, please fill out the form below and a member of our team will reach out to you to schedule a time to meet.
                 </p>
-                <div class="max-w-xl mx-auto card">
-                    <form class="space-y-4">
+                <div class="max-w-3xl mx-auto card"> <!-- Increased max-width for better horizontal layout -->
+                    <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- First Name (Mandatory) -->
                         <div>
                             <label for="firstName" class="block text-left text-gray-700 font-medium mb-1">First Name <span class="text-red-500">*</span></label>
@@ -196,6 +196,11 @@
                             <label for="email" class="block text-left text-gray-700 font-medium mb-1">Email <span class="text-red-500">*</span></label>
                             <input type="email" id="email" name="email" class="input-field" placeholder="your@example.com" required>
                         </div>
+                        <!-- Job Title (Mandatory) -->
+                        <div>
+                            <label for="jobTitle" class="block text-left text-gray-700 font-medium mb-1">Job Title <span class="text-red-500">*</span></label>
+                            <input type="text" id="jobTitle" name="jobTitle" class="input-field" placeholder="Your Job Title" required>
+                        </div>
                         <!-- Phone Number (Optional) -->
                         <div>
                             <label for="phoneNumber" class="block text-left text-gray-700 font-medium mb-1">Phone Number (Optional)</label>
@@ -203,9 +208,9 @@
                         </div>
                         <!-- Country (Dropdown) -->
                         <div>
-                            <label for="country" class="block text-left text-gray-700 font-medium mb-1">Country</label>
-                            <select id="country" name="country" class="input-field">
-                                <option value="">Select your country</option>
+                            <label for="country" class="block text-left text-gray-700 font-medium mb-1">Country <span class="text-red-500">*</span></label>
+                            <select id="country" name="country" class="input-field" required>
+                                <option value="">Please Select</option>
                                 <option value="USA">United States</option>
                                 <option value="CAN">Canada</option>
                                 <option value="GBR">United Kingdom</option>
@@ -215,25 +220,34 @@
                                 <option value="OTHER">Other</option>
                             </select>
                         </div>
-                        <!-- Type of Inspection (Dropdown) -->
-                        <div>
-                            <label for="inspectionType" class="block text-left text-gray-700 font-medium mb-1">Type of Inspection</label>
-                            <select id="inspectionType" name="inspectionType" class="input-field">
-                                <option value="">Select inspection type</option>
+                        <!-- Company Name (Mandatory, spans both columns) -->
+                        <div class="md:col-span-2">
+                            <label for="companyName" class="block text-left text-gray-700 font-medium mb-1">Company Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="companyName" name="companyName" class="input-field" placeholder="Your Company Name" required>
+                        </div>
+                        <!-- Type of Inspection (Mandatory Dropdown, spans both columns) -->
+                        <div class="md:col-span-2">
+                            <label for="inspectionType" class="block text-left text-gray-700 font-medium mb-1">What type of inspections are you most interested in today? <span class="text-red-500">*</span></label>
+                            <select id="inspectionType" name="inspectionType" class="input-field" required>
+                                <option value="">Please Select</option>
                                 <option value="blade">Blade Inspection</option>
                                 <option value="tower">Tower & Foundation Scan</option>
                                 <option value="predictive">Predictive Maintenance</option>
+                                <option value="thermal">Thermal Inspection</option>
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        <!-- Message (Existing) -->
-                        <div>
+                        <!-- Message (Existing, spans both columns) -->
+                        <div class="md:col-span-2">
                             <label for="message" class="block text-left text-gray-700 font-medium mb-1">Message</label>
                             <textarea id="message" name="message" rows="4" class="input-field" placeholder="Tell us about your needs..."></textarea>
                         </div>
-                        <!-- Submit button for the contact form -->
-                        <button type="submit" class="btn-primary w-full">Send Message</button>
+                        <!-- Submit button for the contact form - Spans both columns -->
+                        <button type="submit" class="btn-primary w-full md:col-span-2">Send Message</button>
                     </form>
+                    <p class="text-xs text-gray-500 mt-4 text-left">
+                        yourcompany.com needs the contact information you provide to us to contact you about our products and services. You may unsubscribe from these communications at anytime. For information on how to unsubscribe, as well as our privacy practices and commitment to protecting your privacy, check out our <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>.
+                    </p>
                 </div>
             </div>
         </section>
